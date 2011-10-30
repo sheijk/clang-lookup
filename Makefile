@@ -8,7 +8,14 @@ else
 TARGETDIR = ./release
 endif
 
-all: $(TARGETDIR)/clang_lookup $(TARGETDIR)/clang_lookup.sh $(TARGETDIR)/libclang.dylib
+BUILD_PLATFORM = $(shell 'uname')
+ifeq "$(BUILD_PLATFORM)" "Linux"
+DLL_EXT = so
+else
+DLL_EXT = dylib
+endif
+
+all: $(TARGETDIR)/clang_lookup $(TARGETDIR)/clang_lookup.sh $(TARGETDIR)/libclang.$(DLL_EXT)
 
 clean:
 	@echo Cleaning target dirs ...
