@@ -30,11 +30,6 @@
 ;;
 ;; This is a very early version lacking reasonable error handling etc.
 ;;
-;; Todo:
-;; - add reasonable error handling
-;; - add customizable function to setup clang arguments (include paths, etc.)
-;; - pass compiler errors and warnings on to flymake
-;;
 
 (defcustom clang-lookup-ld-libclang-path
   ""
