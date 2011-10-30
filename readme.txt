@@ -1,8 +1,9 @@
 
-clang-lookup is a very simple CLI tool to resolve an identifier using
-Clang. Pass it a file, line and column number on the command line and it will
-print warning/errors and a line describing the location where the symbol at the
-given source location is defined.
+clang-lookup is a very simple CLI tool for navigation of C and C++ code bases
+using the semantic analysis engine of the Clang compiler. Pass it a file, line
+and column number on the command line and it will print warning/errors and a
+line describing the location where the symbol at the given source location is
+defined.
 
 Building
 ========
