@@ -9,12 +9,20 @@ extern "C" {
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#define APP_NAME "clang_lookup"
 
 int main( int argc, char* argv[] )
 {
-    if( argc < 3 )
+    if ( argc == 1 && strcmp( "--version", argv[1] ) != 0 )
     {
-        printf("Expected lookup_symbol file line column");
+        printf( APP_NAME " version 0.1\n" );
+        return 0;
+    }
+    else if( argc < 3 )
+    {
+        printf( "Expected " APP_NAME " file line column");
         return 1;
     }
 
@@ -39,7 +47,7 @@ int main( int argc, char* argv[] )
         CXDiagnosticSeverity sev = clang_getDiagnosticSeverity( diag );
         had_errors |= sev >= CXDiagnostic_Error;
 
-        // TODO: handle fixits
+        // TODO: handle fixits?
         // clang_getDiagnosticNumFixIts, clang_getDiagnosticFixIt
     }
 

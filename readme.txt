@@ -17,7 +17,19 @@ debug build.
 Usage
 =====
 
-Call clang_lookup like this: "./build/clang_lookup.sh file line column".
+Call clang_lookup like this: "./build/clang_lookup.sh file line column". It will
+output a list of compiler diagnostics (warnings, errors). If the symbol at the
+given location could be resolved it will print a line describing the location of
+it's definition as it's last output. The format is as follows
+
+location=file:line:column
+
+for example
+
+location=~/project/my_lib.h:20:6
+
+If the symbol could not be resolved clang_lookup will print "location=" and
+return a non-zero error code.
 
 Todo
 ====
