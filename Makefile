@@ -8,25 +8,11 @@ else
 TARGETDIR = ./release
 endif
 
-all: $(TARGETDIR)/clang_lookup
+all: $(TARGETDIR)/clang_lookup $(TARGETDIR)/clang_lookup.sh $(TARGETDIR)/libclang.dylib
 
 clean:
 	@echo Cleaning target dirs ...
 	rm -rfd debug release
-
-$(TARGETDIR)/exists:
-	mkdir -p $(TARGETDIR)
-	touch $@
-
-$(TARGETDIR)/%.o: %.cpp $(TARGETDIR)/has_llvm $(TARGETDIR)/has_clang
-	@echo Compiling $< ...
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
-$(TARGETDIR)/clang_lookup: $(TARGETDIR)/clang_lookup_app.o
-	@echo Linking $@ ...
-	$(CXX) $(LDFLAGS) $(LLVM_LIBS) $(CLANG_LIBS) $< -o $@
-
-
 
 CXXFLAGS = -I$(LLVM_INCLUDE_DIR) -I$(CLANG_INCLUDE_DIR)
 LDFLAGS = -L $(LLVM_LIB_DIR)
@@ -50,6 +36,31 @@ LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Release/lib
 endif
 
 PATH := $(LLVM_BIN_DIR):$(PATH)
+
+
+$(TARGETDIR)/exists:
+	mkdir -p $(TARGETDIR)
+	touch $@
+
+$(TARGETDIR)/%.o: %.cpp $(TARGETDIR)/has_llvm $(TARGETDIR)/has_clang
+	@echo Compiling $< ...
+	$(CXX) -c $(CXXFLAGS) $< -o $@
+
+$(TARGETDIR)/clang_lookup: $(TARGETDIR)/clang_lookup_app.o
+	@echo Linking $@ ...
+	$(CXX) $(LDFLAGS) $(LLVM_LIBS) $(CLANG_LIBS) $< -o $@
+
+$(TARGETDIR)/clang_lookup.sh: $(TARGETDIR)/exists
+	@echo Creating $@ ...
+	echo '#!/usr/bin/env sh' > $@
+	echo 'CLANG_LOOKUP_DIR=`dirname $$0`' >> $@
+	echo 'CLANG_LOOKUP_DIR=`cd $${CLANG_LOOKUP_DIR}; pwd`' >> $@
+	echo 'LD_LIBRARY_PATH=$${CLANG_LOOKUP_DIR} $${CLANG_LOOKUP_DIR}/clang_lookup $$@' >> $@
+	echo 'exit $${EXITSTATUS}' >> $@
+	chmod a+x $@
+
+$(TARGETDIR)/libclang.dylib: $(LLVM_LIB_DIR)/libclang.dylib
+	cp $< $@
 
 $(TARGETDIR)/has_llvm: $(TARGETDIR)/exists
 	@echo Checking if LLVM exists ...

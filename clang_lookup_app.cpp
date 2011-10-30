@@ -15,12 +15,12 @@ extern "C" {
 
 int main( int argc, char* argv[] )
 {
-    if ( argc == 1 && strcmp( "--version", argv[1] ) != 0 )
+    if ( argc == 2 && strcmp( "--version", argv[0] ) != 0 )
     {
         printf( APP_NAME " version 0.1\n" );
         return 0;
     }
-    else if( argc < 3 )
+    else if( argc < 4 )
     {
         printf( "Expected " APP_NAME " file line column");
         return 1;

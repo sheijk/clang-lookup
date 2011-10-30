@@ -31,12 +31,6 @@
 ;; This is a very early version lacking reasonable error handling etc.
 ;;
 
-(defcustom clang-lookup-ld-libclang-path
-  ""
-  "Path to libclang.so"
-  :type 'string
-  :group 'clang-lookup)
-
 (defcustom clang-lookup-exe
   "clang_lookup.exe"
   "clang_lookup executable"
@@ -49,10 +43,7 @@
          (line (1+ (current-line)))
          (column (1+ (current-column)))
          (output (shell-command-to-string
-                 (format "LD_LIBRARY_PATH=%s %s %s %s %s"
-                         clang-lookup-ld-libclang-path
-                         clang-lookup-exe
-                         file line column))))
+                 (format "%s %s %s %s" clang-lookup-exe file line column))))
     (let ((sym-file nil)
           (sym-line nil)
           (sym-column nil)
