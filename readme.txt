@@ -45,6 +45,8 @@ More info
 Send feedback, bug reports, patches etc. to the following super-obfuscated
 mail address: jrehders *at* gmx *dot* net
 
+https://github.com/sheijk/clang-lookup
+
 http://llvm.org
 http://clang.llvm.org
 
