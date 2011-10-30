@@ -2,25 +2,31 @@
 # all: clang_lookup_app
 # clang_lookup_app: has_llvm has_clang
 
-TARGETDIR = ./build
+ifeq "$(DEBUG)" "1"
+TARGETDIR = ./debug
+else
+TARGETDIR = ./release
+endif
 
 all: $(TARGETDIR)/clang_lookup
 
 clean:
-	@echo Cleaning target dir ...
-	rm -rfd $(TARGETDIR)
+	@echo Cleaning target dirs ...
+	rm -rfd debug release
 
 $(TARGETDIR)/exists:
 	mkdir -p $(TARGETDIR)
 	touch $@
 
-build/%.o: %.cpp $(TARGETDIR)/has_llvm $(TARGETDIR)/has_clang
+$(TARGETDIR)/%.o: %.cpp $(TARGETDIR)/has_llvm $(TARGETDIR)/has_clang
 	@echo Compiling $< ...
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-build/clang_lookup: build/clang_lookup_app.o
+$(TARGETDIR)/clang_lookup: $(TARGETDIR)/clang_lookup_app.o
 	@echo Linking $@ ...
 	$(CXX) $(LDFLAGS) $(LLVM_LIBS) $(CLANG_LIBS) $< -o $@
+
+
 
 CXXFLAGS = -I$(LLVM_INCLUDE_DIR) -I$(CLANG_INCLUDE_DIR)
 LDFLAGS = -L $(LLVM_LIB_DIR)
@@ -36,11 +42,11 @@ CLANG_BASE_DIR = ./llvm/tools/clang
 CLANG_INCLUDE_DIR = $(CLANG_BASE_DIR)/include
 
 ifeq "$(DEBUG)" "1"
-LLVM_BIN_DIR = $(LLVM_BASE_DIR)/Release/bin
-LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Release/lib
-else
 LLVM_BIN_DIR = $(LLVM_BASE_DIR)/Debug/bin
 LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Debug/lib
+else
+LLVM_BIN_DIR = $(LLVM_BASE_DIR)/Release/bin
+LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Release/lib
 endif
 
 PATH := $(LLVM_BIN_DIR):$(PATH)
