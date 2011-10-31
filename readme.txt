@@ -5,6 +5,9 @@ and column number on the command line and it will print warning/errors and a
 line describing the location where the symbol at the given source location is
 defined.
 
+It currently works best with C, full support for parsing C++ will be coming up
+shortly.
+
 Building
 ========
 
@@ -36,9 +39,14 @@ Todo
 ====
 
 - add reasonable error handling
+- add automated tests
+  (using tests dir, pre-set locations and results)
+- fix C++ support
+  (use clang_createTranslationUnitFromSourceFile + clang_command_line_args)
 - add customizable function to setup clang arguments (include paths, etc.)
 - pass compiler errors and warnings on to flymake
 - support reading source from stdin
+- persistent/cached data base(?)
 
 More info
 =========
