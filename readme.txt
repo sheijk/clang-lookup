@@ -6,7 +6,9 @@ line describing the location where the symbol at the given source location is
 defined.
 
 It currently works best with C, full support for parsing C++ will be coming up
-shortly.
+shortly. clang-lookup is designed to work out-of-the-box without any setup. The
+disadvantage is that each invocation has to re-parse the given file. For large
+projects some of the alternatives might work better (see end of this file).
 
 Building
 ========
@@ -58,4 +60,21 @@ https://github.com/sheijk/clang-lookup
 
 http://llvm.org
 http://clang.llvm.org
+
+Other tools offering similar functionality.
+
+http://blog.wuwon.id.au/2011/10/vim-plugin-for-navigating-c-with.html
+https://github.com/Sarcasm/irony-mode
+
+Both create a persistant index on disk. This can be faster but requires a bit of
+setup.
+
+http://ctags.sourceforge.net/
+http://goog-gtags.sourceforge.net/
+http://www.gnu.org/s/global/
+http://cscope.sourceforge.net/
+
+Mostly depend on regexps or similar hacks. They all are useful tools even for
+large projects. Their indexing is less accurate than basing such information on
+the compiler's analysis, though.
 
