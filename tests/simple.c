@@ -1,6 +1,4 @@
 
-#include <stdio.h>
-
 void f_no_arg(void);
 void f_no_arg2(void);
 
@@ -47,8 +45,7 @@ enum BarEnum v_barenum = BE_d;
 // A little test for clang-lookup
 int foo(int abc)
 {
-    printf( "foobar baz\n" );
-
+    // nested scopes, hiding names
     {
         int abc = 0;
         f_void_int( abc );
