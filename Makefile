@@ -44,7 +44,6 @@ endif
 
 PATH := $(LLVM_BIN_DIR):$(PATH)
 
-
 $(TARGETDIR)/exists:
 	mkdir -p $(TARGETDIR)
 	touch $@
