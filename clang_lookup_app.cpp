@@ -55,18 +55,32 @@ int main( int argc, char* argv[] )
     unsigned def_line = 0, def_column = 0, def_offset = 0;
     const char* def_file_name = 0;
 
-    if ( ! had_errors )
+    if( ! had_errors )
     {
         CXFile file = clang_getFile( tu, file_name );
         CXSourceLocation lookup_loc = clang_getLocation( tu, file, line, column );
         CXCursor sym = clang_getCursor( tu, lookup_loc );
-        CXCursor definition = clang_getCursorReferenced( sym );
-        CXSourceLocation def_loc = clang_getCursorLocation( definition );
 
-        CXFile def_file;
-        clang_getSpellingLocation( def_loc, &def_file, &def_line, &def_column, &def_offset );
-        def_file_name_cx = clang_getFileName( def_file );
-        def_file_name = clang_getCString( def_file_name_cx );
+        if( clang_equalCursors( sym, clang_getNullCursor() ) )
+        {
+            printf( "symbol=\n" );
+        }
+        else
+        {
+            {
+                CXString name_cx = clang_getCursorSpelling( sym );
+                printf( "symbol=%s\n", clang_getCString( name_cx ) );
+                clang_disposeString( name_cx );
+            }
+
+            CXCursor definition = clang_getCursorReferenced( sym );
+            CXSourceLocation def_loc = clang_getCursorLocation( definition );
+
+            CXFile def_file;
+            clang_getSpellingLocation( def_loc, &def_file, &def_line, &def_column, &def_offset );
+            def_file_name_cx = clang_getFileName( def_file );
+            def_file_name = clang_getCString( def_file_name_cx );
+        }
     }
 
     if( def_file_name != 0 )
