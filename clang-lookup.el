@@ -37,13 +37,32 @@
   :type 'string
   :group 'clang-lookup)
 
+(defcustom clang-lookup-extra-args
+  nil
+  "String containing list of additional args to be passed to clang-lookup-exe"
+  :type '(repeat string)
+  :group 'clang-lookup)
+
+(defcustom clang-lookup-debug-mode
+  nil
+  "Print debugging messages"
+  :type 'boolean
+  :group 'clang-lookup)
+
+(defun clang-lookup-debug-msg (format &rest args)
+  (when clang-lookup-debug-msg
+    (apply 'message format args)))
+
 (defun clang-lookup ()
   (interactive)
+  ;; (clang-lookup-debug-msg "symbol lookup")
   (let* ((file (buffer-file-name))
-         (line (1+ (current-line)))
+         (line (current-line))
          (column (1+ (current-column)))
-         (output (shell-command-to-string
-                 (format "%s %s %s %s" clang-lookup-exe file line column))))
+         (clang-command
+          (format "%s %s %s %s %s" clang-lookup-exe file line column
+                  (mapconcat 'identity clang-lookup-extra-args " ")))
+         (output (shell-command-to-string clang-command)))
     (let ((sym-file nil)
           (sym-line nil)
           (sym-column nil)
@@ -51,19 +70,23 @@
       (dolist (line lines)
         (let* ((tokens (split-string line "[=:]"))
                (hd (nth 0 tokens)))
-          (when (equal "location" hd)
+          (when (and (= 4 (length tokens)) (equal "location" hd))
             (setq sym-file (nth 1 tokens))
             (setq sym-line (string-to-number (nth 2 tokens)))
             (setq sym-column (string-to-number (nth 3 tokens))))))
       (if (and sym-file sym-line sym-column)
-          (list :file sym-file :line sym-line :column sym-column)
+          (progn
+            ;; (clang-lookup-debug-msg "clang-lookup found it")
+            (list :file sym-file :line sym-line :column sym-column))
+        ;; (clang-lookup-debug-msg "clang-lookup found nothing")
+        (clang-lookup-debug-msg "Invoked %s\n---\n%s" clang-command output)
         (list :error "Symbol not found")))))
 
 (defun clang-goto-symbol-at-point ()
   (interactive)
   (condition-case nil
       (destructuring-bind (:file file :line line :column column) (clang-lookup)
-        (message "loc %s:%s:%s" file line column)
+        ;; (clang-lookup-debug-msg "found symbol at %s:%s:%s" file line column)
         (find-file file)
         (goto-line line)
         (beginning-of-line 1)
