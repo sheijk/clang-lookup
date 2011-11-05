@@ -2,11 +2,19 @@
 # all: clang_lookup_app
 # clang_lookup_app: has_llvm has_clang
 
+DEBUG=0
+
 ifeq "$(DEBUG)" "1"
-TARGETDIR = ./debug
+VARIANT=Debug
 else
-TARGETDIR = ./release
+ifeq "$(DEBUG)" "0"
+VARIANT=Release
+else
+$(error "DEBUG must be either 0 or 1")
 endif
+endif
+
+TARGETDIR=$(VARIANT)
 
 BUILD_PLATFORM = $(shell 'uname')
 ifeq "$(BUILD_PLATFORM)" "Linux"
@@ -19,30 +27,19 @@ all: $(TARGETDIR)/clang_lookup $(TARGETDIR)/clang_lookup.sh $(TARGETDIR)/libclan
 
 clean:
 	@echo Cleaning target dirs ...
-	rm -rfd debug release
+	rm -rfd Debug Release
 
-CXXFLAGS = -I$(LLVM_INCLUDE_DIR) -I$(CLANG_INCLUDE_DIR)
-LDFLAGS = -L $(LLVM_LIB_DIR)
+CXXFLAGS = -I$(LLVM_BASE_DIR)/include -I$(CLANG_BASE_DIR)/include
+LDFLAGS = -L $(LLVM_BASE_DIR)/$(VARIANT)/lib
 
 # TODO: check which of those libs are needed
 LLVM_LIBS = -lLLVMSupport -lLLVMBitWriter -lLLVMBitWriter -lLLVMmc
 CLANG_LIBS = -lclang -lclangLex -lclangAST -lclangParse -lclangAnalysis -lclangRewrite -lclangBasic -lclangSema -lclangCodeGen -lclangSerialization -lclangDriver -lclangStaticAnalyzerCheckers -lclangFrontend -lclangStaticAnalyzerCore -lclangFrontendTool -lclangStaticAnalyzerFrontend -lclangIndex
 
 LLVM_BASE_DIR = ./llvm
-LLVM_INCLUDE_DIR = $(LLVM_BASE_DIR)/include
-
 CLANG_BASE_DIR = ./llvm/tools/clang
-CLANG_INCLUDE_DIR = $(CLANG_BASE_DIR)/include
 
-ifeq "$(DEBUG)" "1"
-LLVM_BIN_DIR = $(LLVM_BASE_DIR)/Debug/bin
-LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Debug/lib
-else
-LLVM_BIN_DIR = $(LLVM_BASE_DIR)/Release/bin
-LLVM_LIB_DIR = $(LLVM_BASE_DIR)/Release/lib
-endif
-
-PATH := $(LLVM_BIN_DIR):$(PATH)
+PATH := $(LLVM_BASE_DIR)/$(VARIANT)/bin:$(PATH)
 
 $(TARGETDIR)/exists:
 	mkdir -p $(TARGETDIR)
@@ -65,7 +62,7 @@ $(TARGETDIR)/clang_lookup.sh: $(TARGETDIR)/exists
 	echo 'exit $${EXITSTATUS}' >> $@
 	chmod a+x $@
 
-$(TARGETDIR)/libclang.dylib: $(LLVM_LIB_DIR)/libclang.dylib
+$(TARGETDIR)/libclang.dylib: $(LLVM_BASE_DIR)/$(VARIANT)/lib/libclang.dylib
 	cp $< $@
 
 $(TARGETDIR)/has_llvm: $(TARGETDIR)/exists
