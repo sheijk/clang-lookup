@@ -1,10 +1,15 @@
 #!/usr/bin/env sh
 
 LOOKUP=../Release/clang_lookup.sh
+ARGS=
 
 function set_file() {
     FILE=$1
+    ARGS=$2
 }
+
+TEST_COUNT=0
+ERROR_COUNT=0
 
 function t() {
     SYM_LINE=$1
@@ -12,9 +17,13 @@ function t() {
     DEF_FILE=$3
     DEF_LINE=$4
 
-    ( ${LOOKUP} ${FILE} ${SYM_LINE} ${SYM_COL} 2> /dev/null ) | grep -q "location=${DEF_FILE}:${DEF_LINE}"
+    TEST_COUNT=$(expr ${TEST_COUNT} + 1)
+
+    RE="location=(./)?${DEF_FILE}:${DEF_LINE}"
+    ( ${LOOKUP} ${FILE} ${SYM_LINE} ${SYM_COL} ${ARGS} 2> /dev/null ) | grep -qE ${RE}
     if [ $? != 0 ] ; then
         echo "error: Expected symbol at ${FILE}:${SYM_LINE}:${SYM_COL} to be defined at ${DEF_FILE}:${DEF_LINE}"
+        ERROR_COUNT=$(expr ${ERROR_COUNT} + 1)
     fi
 }
 
@@ -32,4 +41,15 @@ t 43 27 simple.c 36
 t 38 28 simple.c 36
 t 34 28 simple.c 31
 t 28 32 simple.c 22
+
+set_file include.c
+t 15 11 include.c 5
+t 19 10 local_testlib.h 4
+t 20 10 local_testlib.h 5
+
+set_file custom_include_dir.c "-Iapi_dir"
+t 16 12 custom_include_dir.c 6
+t 20 8 api_dir/include/cl_test_lib.h 18
+
+echo "${ERROR_COUNT}/${TEST_COUNT} tests failed"
 
