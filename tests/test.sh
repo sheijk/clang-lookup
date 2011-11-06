@@ -64,5 +64,12 @@ t 34 8 class.cpp 9
 t 35 10 class.cpp 25
 t 27 22 class.cpp 11
 
+set_file clang_api.cpp "-I../llvm/tools/clang/include"
+t 8 30 ../llvm/tools/clang/include/clang-c/Index.h 191
+t 9 10 ../llvm/tools/clang/include/clang-c/Index.h 200
+
+set_file llvm_api.cpp "-I../llvm/include -DNDEBUG -D_GNU_SOURCE -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS"
+t 8 8 llvm_api.cpp 6
+
 echo "${ERROR_COUNT}/${TEST_COUNT} tests failed"
 
