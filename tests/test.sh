@@ -51,5 +51,18 @@ set_file custom_include_dir.c "-Iapi_dir"
 t 16 12 custom_include_dir.c 6
 t 20 8 api_dir/include/cl_test_lib.h 18
 
+set_file simplepp.cpp
+t 7 10 simplepp.cpp 2
+t 8 10 simplepp.cpp 3
+
+set_file class.cpp
+t 5 24 class.cpp 14
+t 20 18 class.cpp 5
+t 22 10 class.cpp 2
+t 33 6 class.cpp 17
+t 34 8 class.cpp 9
+t 35 10 class.cpp 25
+t 27 22 class.cpp 11
+
 echo "${ERROR_COUNT}/${TEST_COUNT} tests failed"
 
