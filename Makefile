@@ -25,6 +25,9 @@ endif
 
 all: $(TARGETDIR)/clang_lookup $(TARGETDIR)/clang_lookup.sh $(TARGETDIR)/libclang.$(DLL_EXT)
 
+test: all
+	cd tests && ./test.sh
+
 clean:
 	@echo Cleaning target dirs ...
 	rm -rfd Debug Release
