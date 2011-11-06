@@ -50,12 +50,12 @@
   :group 'clang-lookup)
 
 (defun clang-lookup-debug-msg (format &rest args)
-  (when clang-lookup-debug-msg
+  (when clang-lookup-debug-mode
     (apply 'message format args)))
 
 (defun clang-lookup ()
   (interactive)
-  ;; (clang-lookup-debug-msg "symbol lookup")
+  (clang-lookup-debug-msg "symbol lookup")
   (let* ((file (buffer-file-name))
          (line (current-line))
          (column (1+ (current-column)))
@@ -78,8 +78,7 @@
           (progn
             ;; (clang-lookup-debug-msg "clang-lookup found it")
             (list :file sym-file :line sym-line :column sym-column))
-        ;; (clang-lookup-debug-msg "clang-lookup found nothing")
-        (clang-lookup-debug-msg "Invoked %s\n---\n%s" clang-command output)
+        (message "Invoked %s\n---\n%s" clang-command output)
         (list :error "Symbol not found")))))
 
 (defun clang-goto-symbol-at-point ()
