@@ -5,8 +5,7 @@ and column number on the command line and it will print warning/errors and a
 line describing the location where the symbol at the given source location is
 defined.
 
-It currently works best with C, full support for parsing C++ will be coming up
-shortly. clang-lookup is designed to work out-of-the-box without any setup. The
+clang-lookup is designed to work out-of-the-box without any setup. The
 disadvantage is that each invocation has to re-parse the given file. For large
 projects some of the alternatives might work better (see end of this file).
 
