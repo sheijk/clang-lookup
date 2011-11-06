@@ -43,6 +43,7 @@ int main( int argc, char* argv[] )
             clang_defaultDiagnosticDisplayOptions() );
         fprintf(stderr, "%s\n", clang_getCString(msg) );
         clang_disposeString( msg );
+        clang_disposeDiagnostic( diag );
 
         CXDiagnosticSeverity sev = clang_getDiagnosticSeverity( diag );
         had_errors |= sev >= CXDiagnostic_Error;
@@ -98,4 +99,11 @@ int main( int argc, char* argv[] )
 
     return had_errors ? 1 : 0;
 }
+
+/*
+ * Local variables:
+ * clang-lookup-extra-args:("-I./llvm/tools/clang/include")
+ * ac-clang-flags:("-I./llvm/tools/clang/include")
+ * End:
+ */
 
